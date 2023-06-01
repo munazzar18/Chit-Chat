@@ -1,12 +1,15 @@
-const express = require('express');
+const express = require("express");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+
 const app = express();
-const http = require('http');
-const server = http.createServer(app);
+const httpServer = createServer(app);
+const port = 3000
 
-app.get('/', (req, res) => {
-  res.send('<h1>Hello world</h1>');
+const io = new Server(httpServer, { /* options */ });
+
+io.on("connection", (socket) => {
+  console.log(socket.id); 
 });
 
-server.listen(3000, () => {
-  console.log('listening on *:3000');
-});
+httpServer.listen(port);
