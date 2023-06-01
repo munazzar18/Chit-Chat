@@ -6,10 +6,23 @@ const app = express();
 const httpServer = createServer(app);
 const port = 3000
 
-const io = new Server(httpServer, { /* options */ });
+const io = new Server(httpServer, { 
+  cors: {
+    origin: "http://localhost:5173"
+  }
+});
+
+const connectedSockets = [];
 
 io.on("connection", (socket) => {
-  console.log(socket.id); 
+  connectedSockets.push(socket);
+
+  socket.on("message", (msg) => {
+    for (const s of connectedSockets) {
+      s.emit("reply", msg);
+    }
+  });
 });
 
 httpServer.listen(port);
+console.log("Listening on port", port);
